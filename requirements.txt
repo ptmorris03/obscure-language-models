@@ -1,0 +1,7 @@
+numpy
+torch
+huggingface
+datasets
+safetensors
+wandb
+tqdm
