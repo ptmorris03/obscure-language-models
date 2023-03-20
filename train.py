@@ -11,11 +11,12 @@ from models.bind_rnn import BindRNN
 
 batch_size = 128
 accumulate_steps = 8
-dims = 512
+dims = 2048
 classes = 30522 #BertTokenizer
 learning_rate = 0.01
 device = torch.device("cuda")
-epochs = 1
+epochs = 10
+warmup_steps = 50
 gradient_clipping = 1.0
 data_folder = Path("data/")
 num_workers = 4
@@ -47,6 +48,12 @@ trainloader = DataLoader(
 model = BindRNN(dims, dims * 4, classes).to(device)
 model = nn.DataParallel(model)
 optim = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+
+def warmup(current_step: int):
+    if current_step < warmup_steps:
+        return float(current_step / warmup_steps)
+    return 1.0
+warmup_scheduler = torch.optim.lr_scheduler.LambdaLR(optim, lr_lambda=warmup)
 
 run = wandb.init(project="BindRNN")
 accumulate_counter, running_loss, running_acc = 0, 0, 0
