@@ -12,7 +12,7 @@ from models.transformer import Transformer
 
 batch_size = 128
 accumulate_steps = 8
-dims = 256
+dims = 1024
 classes = 30522 #BertTokenizer
 learning_rate = 0.01
 device = torch.device("cuda")
@@ -47,7 +47,7 @@ trainloader = DataLoader(
 )
 
 #model = BindRNN(dims, dims * 4, classes).to(device)
-model = Transformer(dims, dims * 4, heads=4, layers=6, classes=classes).to(device)
+model = Transformer(dims, dims * 4, heads=8, layers=2, classes=classes).to(device)
 model = nn.DataParallel(model)
 optim = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
