@@ -1,6 +1,6 @@
 numpy
 torch
-huggingface
+transformers
 datasets
 safetensors
 wandb
