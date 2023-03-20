@@ -5,3 +5,4 @@ datasets
 safetensors
 wandb
 tqdm
+typer[all]
