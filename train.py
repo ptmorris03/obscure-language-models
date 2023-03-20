@@ -7,11 +7,12 @@ import wandb
 from pathlib import Path
 
 from models.bind_rnn import BindRNN
+from models.transformer import Transformer
 
 
 batch_size = 128
 accumulate_steps = 8
-dims = 2048
+dims = 256
 classes = 30522 #BertTokenizer
 learning_rate = 0.01
 device = torch.device("cuda")
@@ -45,7 +46,8 @@ trainloader = DataLoader(
     drop_last=True
 )
 
-model = BindRNN(dims, dims * 4, classes).to(device)
+#model = BindRNN(dims, dims * 4, classes).to(device)
+model = Transformer(dims, dims * 4, heads=4, layers=6, classes=classes).to(device)
 model = nn.DataParallel(model)
 optim = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
@@ -76,6 +78,7 @@ for epoch in range(epochs):
             if gradient_clipping > 0.0:
                 nn.utils.clip_grad_norm_(model.parameters(), gradient_clipping)
             optim.step()
+            warmup_scheduler.step()
             optim.zero_grad()
 
             loss = running_loss / accumulate_steps
