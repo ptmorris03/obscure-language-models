@@ -8,11 +8,12 @@ from pathlib import Path
 
 from models.bind_rnn import BindRNN
 from models.transformer import Transformer
+from models.point_lm import PointLM
 
 
 batch_size = 128
 accumulate_steps = 8
-dims = 1024
+dims = 64
 classes = 30522 #BertTokenizer
 learning_rate = 0.01
 device = torch.device("cuda")
@@ -46,8 +47,9 @@ trainloader = DataLoader(
     drop_last=True
 )
 
-#model = BindRNN(dims, dims * 4, classes).to(device)
-model = Transformer(dims, dims * 4, heads=8, layers=2, classes=classes).to(device)
+model = BindRNN(dims, dims * 4, classes).to(device)
+#model = Transformer(dims, dims * 4, heads=2, layers=2, classes=classes).to(device)
+#model = PointLM(dims, dims * 4, layers=2, classes=classes).to(device)
 model = nn.DataParallel(model)
 optim = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
