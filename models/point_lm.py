@@ -32,6 +32,7 @@ class PointLayer(nn.Module):
     def forward(self, x):
         h = self.prenorm(x)
         h = self.linear1(h)
+        h = F.gelu(h)
         sizes = [self.hdims - self.dims, self.dims]
         h1, h2 = torch.split(h, sizes, dim=-1)
         h1 = h1.max(dim=-2, keepdim=True).values
